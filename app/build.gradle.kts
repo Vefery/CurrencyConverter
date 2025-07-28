@@ -83,6 +83,8 @@ dependencies {
 
     // coil
     implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     // room
     implementation(libs.androidx.room.runtime)
