@@ -42,9 +42,11 @@ fun CurrenciesList(
 ) {
     var isLoading by rememberSaveable { mutableStateOf(true) }
     var rates by rememberSaveable { mutableStateOf<List<RateDto>>(emptyList()) }
+    var balanceMap: Map<String, Double> by rememberSaveable { mutableStateOf(emptyMap()) }
 
     LaunchedEffect(baseCurrency, amount) {
-        println(viewModel.getAccounts()[0])
+        balanceMap = viewModel.getAccounts().associate { it.code to it.amount }
+        println(balanceMap["RUB"])
         while(true) {
             delay(1000L)
             rates = RemoteRatesServiceImpl().getRates(baseCurrencyCode = baseCurrency, amount = amount)
@@ -66,7 +68,7 @@ fun CurrenciesList(
                 CurrencyEntry(
                     rate = rate,
                     currencyName = CurrencyHelper.getFullName(rate.currency),
-                    balance = 10.0,
+                    balance = balanceMap.getOrDefault(key = rate.currency.uppercase(), defaultValue = 0.0),
                     currencyFormatter = {amount -> CurrencyHelper.formatCurrencyCustom(
                         amount = amount,
                         currencyCode = rate.currency
