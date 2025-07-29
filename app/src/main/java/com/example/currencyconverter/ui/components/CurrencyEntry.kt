@@ -29,13 +29,15 @@ import coil.compose.SubcomposeAsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.domain.logic.CurrencyHelper
 
 @Composable
 fun CurrencyEntry(
     modifier: Modifier = Modifier,
     rate: RateDto,
     currencyName: String,
-    balance: Double
+    balance: Double,
+    currencyFormatter: (amount: Double) -> String
 ) {
     Surface(
         modifier = modifier,
@@ -71,25 +73,15 @@ fun CurrencyEntry(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Balance: $balance",
+                    text = "Balance: ${currencyFormatter(balance)}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
             Text(
-                text = rate.value.toString(),
+                text = currencyFormatter(rate.value),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun CurrencyEntryPreview() {
-    CurrencyEntry(
-        rate = RateDto("RUB", 1.0),
-        currencyName = "Russian Rouble",
-        balance = 50000.0
-    )
 }
