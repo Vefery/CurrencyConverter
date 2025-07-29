@@ -2,6 +2,8 @@
 agp = "8.7.2"
 coilCompose = "2.7.0"
 composeBomVersion = "2025.05.00"
+hiltAndroid = "2.48"
+hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.16.0"
 junit = "4.14-SNAPSHOT"
@@ -36,8 +38,10 @@ kotlinxCoroutinesTest = "1.6.0"
 [libraries]
 androidx-compose-bom-v20250500 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilCompose" }
+hilt-android-v248 = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

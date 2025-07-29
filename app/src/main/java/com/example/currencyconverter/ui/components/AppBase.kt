@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.domain.logic.AccountViewModel
 import com.example.currencyconverter.domain.logic.CurrencyHelper
 import kotlinx.coroutines.launch
 
@@ -95,10 +96,13 @@ fun AppBase() {
             ) }
         ) {
             innerPadding ->
-            CurrenciesList(
-                modifier = Modifier.padding(innerPadding),
-                baseCurrency = "USD",
-                amount = 100000.0)
+            when(curScreen) {
+                CurrentScreen.Currencies -> CurrenciesScreen(
+                    modifier = Modifier.padding(innerPadding)
+                )
+                CurrentScreen.Exchange -> {}
+                CurrentScreen.Transactions -> {}
+            }
         }
     }
 }

@@ -37,12 +37,14 @@ fun CurrencyEntry(
     rate: RateDto,
     currencyName: String,
     balance: Double,
-    currencyFormatter: (amount: Double) -> String
+    currencyFormatter: (amount: Double) -> String,
+    onClick: (newCode: String) -> Unit
 ) {
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
+        onClick = { onClick(rate.currency) }
     ) {
         Row(
             modifier = Modifier.padding(5.dp),
@@ -72,10 +74,12 @@ fun CurrencyEntry(
                     text = currencyName,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Text(
-                    text = "Balance: ${currencyFormatter(balance)}",
-                    style = MaterialTheme.typography.bodySmall
-                )
+                if (balance > 0.0) {
+                    Text(
+                        text = "Balance: ${currencyFormatter(balance)}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
             Text(
                 text = currencyFormatter(rate.value),
