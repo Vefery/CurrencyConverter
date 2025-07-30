@@ -57,19 +57,6 @@ fun AppBase() {
                 )
                 NavigationDrawerItem(
                     shape = MaterialTheme.shapes.small,
-                    label = { Text(text = "Exchange") },
-                    selected = curScreen == CurrentScreen.Exchange,
-                    onClick = {
-                        curScreen = CurrentScreen.Exchange
-                        scope.launch {
-                            drawerState.apply {
-                                close()
-                            }
-                        }
-                    }
-                )
-                NavigationDrawerItem(
-                    shape = MaterialTheme.shapes.small,
                     label = { Text(text = "Transactions") },
                     selected = curScreen == CurrentScreen.Transactions,
                     onClick = {
