@@ -46,6 +46,7 @@ fun CurrenciesList(
     var balanceMap: Map<String, Double> by rememberSaveable { mutableStateOf(emptyMap()) }
 
     LaunchedEffect(baseCurrency, amount) {
+        isLoading = true
         balanceMap = viewModel.getAccounts().associate { it.code to it.amount }
         while(true) {
             delay(1000L)
@@ -100,10 +101,7 @@ fun CurrenciesList(
                         amount = amount,
                         currencyCode = rate.currency
                     )},
-                    onClick = {
-                        isLoading = true
-                        onCurrencyClick(rate.currency)
-                    },
+                    onClick = onCurrencyClick,
                     onAmountChange = {}
                 )
                 Spacer(modifier = Modifier.padding(vertical = 2.dp))
