@@ -1,32 +1,64 @@
 package com.example.currencyconverter.ui.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
+import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.logic.AccountViewModel
-import com.example.currencyconverter.ui.components.CurrenciesList
+import kotlinx.coroutines.delay
 
 @Composable
 fun CurrenciesScreen(
-    modifier: Modifier
+    balanceMap: Map<String, Double>,
+    modifier: Modifier,
+    onExchange: (newExchange: Exchange) -> Unit
 ) {
     var currentCurrency by rememberSaveable { mutableStateOf("USD") }
     var currentAmount by rememberSaveable { mutableDoubleStateOf(1.0) }
+    var isLoading by rememberSaveable { mutableStateOf(true) }
+    var rates by rememberSaveable { mutableStateOf<List<RateDto>>(emptyList()) }
+
     val currencyClickFun = if (currentAmount != 1.0) {
-        {  }
+        { newCode: String ->
+            onExchange(Exchange(
+                targetRate = RateDto(
+                    currency = currentCurrency,
+                    value = currentAmount
+                ),
+                sourceRate = RateDto(
+                    currency = newCode,
+                    value = rates.find { it.currency == newCode }!!.value
+                )
+            ))
+        }
     } else {
         { newCode: String -> currentCurrency = newCode }
     }
 
+    LaunchedEffect(currentCurrency, currentAmount) {
+        isLoading = true
+        while(true) {
+            delay(1000L)
+            rates = RemoteRatesServiceImpl().getRates(baseCurrencyCode = currentCurrency, amount = currentAmount)
+            isLoading = false
+        }
+    }
+
     CurrenciesList(
         modifier = modifier,
-        baseCurrency = currentCurrency,
         amount = currentAmount,
         onCurrencyClick = currencyClickFun,
+        isLoading = isLoading,
+        rates = rates,
+        balanceMap = balanceMap,
         onAmountChange = {newAmount ->
             currentAmount = newAmount
         }

@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,11 +59,12 @@ fun CurrencyEntry(
     balance: Double,
     primary: Boolean = false,
     currencyFormatter: (amount: Double) -> String,
+    balanceFormatter: (amount: Double) -> String,
     onClick: (newCode: String) -> Unit,
     onAmountChange: (newAmount: Double) -> Unit
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value)) }
+    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value,)) }
 
     Surface(
         modifier = modifier.clickable(enabled = !primary) {
@@ -101,7 +103,7 @@ fun CurrencyEntry(
                 )
                 if (balance > 0.0) {
                     Text(
-                        text = "Balance: ${currencyFormatter(balance)}",
+                        text = "Balance: ${balanceFormatter(balance)}",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -123,6 +125,7 @@ fun CurrencyEntry(
                     text = amountText,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Right,
+                    softWrap = false,
                     modifier = Modifier.width(IntrinsicSize.Min).clickable(enabled = primary) { isEditing = true }
                 )
             }
