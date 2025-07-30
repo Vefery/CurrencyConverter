@@ -22,6 +22,9 @@ fun CurrenciesScreen(
         amount = currentAmount,
         onCurrencyClick = {
             newCode -> currentCurrency = newCode
+        },
+        onAmountChange = {newAmount ->
+            currentAmount = newAmount
         }
     )
 }

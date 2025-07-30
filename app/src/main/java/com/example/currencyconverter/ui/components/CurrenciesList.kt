@@ -38,7 +38,8 @@ fun CurrenciesList(
     modifier: Modifier,
     baseCurrency: String,
     amount: Double,
-    onCurrencyClick: (newCode: String) -> Unit
+    onCurrencyClick: (newCode: String) -> Unit,
+    onAmountChange: (newAmount: Double) -> Unit
 ) {
     var isLoading by rememberSaveable { mutableStateOf(true) }
     var rates by rememberSaveable { mutableStateOf<List<RateDto>>(emptyList()) }
@@ -46,7 +47,6 @@ fun CurrenciesList(
 
     LaunchedEffect(baseCurrency, amount) {
         balanceMap = viewModel.getAccounts().associate { it.code to it.amount }
-        println(balanceMap["RUB"])
         while(true) {
             delay(1000L)
             rates = RemoteRatesServiceImpl().getRates(baseCurrencyCode = baseCurrency, amount = amount)
@@ -62,8 +62,35 @@ fun CurrenciesList(
             CircularProgressIndicator(modifier = Modifier.requiredSize(100.dp))
         }
     } else {
+        val ratesFiltered: List<RateDto> = if (amount != 1.0) {
+            rates.subList(1, rates.size).filter { it.value < balanceMap.getOrDefault(key = it.currency.uppercase(), defaultValue = 0.0) }
+        } else {
+            rates.subList(1, rates.size)
+        }
+
         LazyColumn(modifier = modifier) {
-            items(rates) {
+            item {
+                CurrencyEntry(
+                    rate = rates[0],
+                    currencyName = CurrencyHelper.getFullName(rates[0].currency),
+                    balance = balanceMap.getOrDefault(key = rates[0].currency.uppercase(), defaultValue = 0.0),
+                    currencyFormatter = {amount -> CurrencyHelper.formatCurrencyCustom(
+                        amount = amount,
+                        currencyCode = rates[0].currency
+                    )},
+                    onClick = {
+                        isLoading = true
+                        onCurrencyClick(rates[0].currency)
+                    },
+                    onAmountChange = {newAmount ->
+                        onAmountChange(newAmount)
+                        isLoading = true
+                    },
+                    primary = true
+                )
+                Spacer(modifier = Modifier.padding(vertical = 2.dp))
+            }
+            items(ratesFiltered) {
                 rate ->
                 CurrencyEntry(
                     rate = rate,
@@ -76,7 +103,8 @@ fun CurrenciesList(
                     onClick = {
                         isLoading = true
                         onCurrencyClick(rate.currency)
-                    }
+                    },
+                    onAmountChange = {}
                 )
                 Spacer(modifier = Modifier.padding(vertical = 2.dp))
             }
