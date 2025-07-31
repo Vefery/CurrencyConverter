@@ -126,7 +126,9 @@ fun AppBase(
                         }
                     }
                 )
-                CurrentScreen.Transactions -> {}
+                CurrentScreen.Transactions -> TransactionsScreen(
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
         }
     }
