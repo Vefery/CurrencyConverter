@@ -12,7 +12,11 @@ import com.example.currencyconverter.data.dataSource.room.transaction.dbo.Transa
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +24,12 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val repository: ConverterRepository
 ) : ViewModel() {
-    suspend fun getAccounts() = repository.getAllAccounts()
+    fun getAccounts() = repository.getAllAccounts()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
     suspend fun updateAccount(data: AccountDbo) = repository.updateAccounts(data)
 
     suspend fun getTransactions() = repository.getAllTransactions()

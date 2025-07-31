@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.logic.AccountViewModel
 import com.example.currencyconverter.domain.logic.CurrencyHelper
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 enum class CurrentScreen {
@@ -44,12 +46,9 @@ fun AppBase(
     val scope = rememberCoroutineScope()
     var curScreen by rememberSaveable { mutableStateOf(CurrentScreen.Currencies) }
     var currentExchange by rememberSaveable { mutableStateOf<Exchange?>(null) }
-    var balanceMap: Map<String, Double> by rememberSaveable { mutableStateOf(emptyMap()) }
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        balanceMap = viewModel.getAccounts().associate { it.code to it.amount }
-    }
+    val balanceMap by viewModel.getAccounts().map { accounts -> accounts.associate { it.code to it.amount } }.collectAsState(initial = emptyMap())
 
     ModalNavigationDrawer(
         drawerState = drawerState,
