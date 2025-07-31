@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.logic.AccountViewModel
 import com.example.currencyconverter.domain.logic.CurrencyHelper
@@ -44,6 +45,7 @@ fun AppBase(
     var curScreen by rememberSaveable { mutableStateOf(CurrentScreen.Currencies) }
     var currentExchange by rememberSaveable { mutableStateOf<Exchange?>(null) }
     var balanceMap: Map<String, Double> by rememberSaveable { mutableStateOf(emptyMap()) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         balanceMap = viewModel.getAccounts().associate { it.code to it.amount }
@@ -106,7 +108,23 @@ fun AppBase(
                 CurrentScreen.Exchange -> ExchangeScreen(
                     modifier = Modifier.padding(innerPadding),
                     curExchange = currentExchange!!,
-                    balanceMap = balanceMap
+                    balanceMap = balanceMap,
+                    handleExchange = { transaction ->
+                        coroutineScope.launch {
+                            viewModel.insertTransaction(transaction)
+                            viewModel.updateAccount(AccountDbo(
+                                code = transaction.from,
+                                amount = balanceMap[transaction.from]!! - transaction.fromAmount
+                            ))
+                            viewModel.updateAccount(AccountDbo(
+                                code = transaction.to,
+                                amount = balanceMap.getOrDefault(key = transaction.to, defaultValue = 0.0) + transaction.toAmount
+                            ))
+
+                            currentExchange = null
+                            curScreen = CurrentScreen.Currencies
+                        }
+                    }
                 )
                 CurrentScreen.Transactions -> {}
             }
