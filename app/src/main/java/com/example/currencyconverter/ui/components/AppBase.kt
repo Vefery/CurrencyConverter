@@ -17,11 +17,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.currencyconverter.R
 import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.entity.ExchangeNavType
@@ -53,7 +55,7 @@ fun AppBase(
             ModalDrawerSheet {
                 NavigationDrawerItem(
                     shape = MaterialTheme.shapes.small,
-                    label = { Text(text = "Currencies") },
+                    label = { Text(text = stringResource(R.string.currencies)) },
                     selected = false,
                     onClick = {
                         navController.navigate(route = CurrenciesNav)
@@ -66,7 +68,7 @@ fun AppBase(
                 )
                 NavigationDrawerItem(
                     shape = MaterialTheme.shapes.small,
-                    label = { Text(text = "Transactions") },
+                    label = { Text(text = stringResource(R.string.transactions)) },
                     selected = false,
                     onClick = {
                         navController.navigate(route = TransactionsNav)

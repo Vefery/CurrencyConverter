@@ -15,17 +15,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.data.dataSource.room.transaction.dbo.TransactionDbo
 import com.example.currencyconverter.domain.logic.CurrencyHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun TransactionEntry(
     modifier: Modifier = Modifier,
     transaction: TransactionDbo
 ) {
+    val context = LocalContext.current
+    val datePattern = if (LocalConfiguration.current.locales[0] == Locale.ENGLISH) "MM/dd/yyyy hh:mm a" else "dd/MM/yyyy HH:mm"
+
+
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -47,7 +54,7 @@ fun TransactionEntry(
                     )
                     Text(
                         modifier = Modifier.padding(10.dp),
-                        text = CurrencyHelper.formatCurrency(transaction.fromAmount, transaction.from),
+                        text = CurrencyHelper.formatCurrency(transaction.fromAmount, transaction.from, context = context),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -66,14 +73,14 @@ fun TransactionEntry(
                     )
                     Text(
                         modifier = Modifier.padding(10.dp),
-                        text = CurrencyHelper.formatCurrency(transaction.toAmount, transaction.to),
+                        text = CurrencyHelper.formatCurrency(transaction.toAmount, transaction.to, context = context),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
             Text(
                 modifier = Modifier.padding(5.dp),
-                text = transaction.dateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a")),
+                text = transaction.dateTime.format(DateTimeFormatter.ofPattern(datePattern)),
                 style = MaterialTheme.typography.bodySmall
             )
         }

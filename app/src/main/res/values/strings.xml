@@ -102,4 +102,10 @@
     <string name="currency_try">Turkish Lira</string>
     <string name="currency_usd">USA Dollar</string>
     <string name="currency_zar">South Africa Rand</string>
+    <string name="currencies">Currencies</string>
+    <string name="transactions">Transactions</string>
+    <string name="balance">Balance</string>
+    <string name="exchange_to">%1s to %2s</string>
+    <string name="buy_for">Buy %1s for %2s</string>
+    <string name="menu">Menu</string>
 </resources>

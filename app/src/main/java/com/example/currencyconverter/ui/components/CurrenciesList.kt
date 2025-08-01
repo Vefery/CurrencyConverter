@@ -12,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
@@ -19,7 +21,6 @@ import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
 import com.example.currencyconverter.domain.logic.AccountViewModel
 import com.example.currencyconverter.domain.logic.CurrencyHelper
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun CurrenciesList(
@@ -32,6 +33,7 @@ fun CurrenciesList(
     onAmountChange: (newAmount: Double) -> Unit
 ) {
     val balanceMap by viewModel.getBalanceMap().collectAsState(initial = emptyMap())
+    val context = LocalContext.current
 
     if (isLoading) {
         LoadingCircle(
@@ -48,16 +50,18 @@ fun CurrenciesList(
             item {
                 CurrencyEntry(
                     rate = rates[0],
-                    currencyName = CurrencyHelper.getFullName(rates[0].currency),
+                    currencyName = stringResource(CurrencyHelper.getFullNameResId(rates[0].currency)),
                     balance = balanceMap.getOrDefault(key = rates[0].currency.uppercase(), defaultValue = 0.0),
                     currencyFormatter = {amount, digits -> CurrencyHelper.formatCurrency(
                         amount = amount,
                         currencyCode = rates[0].currency,
-                        fractionDigits = digits
+                        fractionDigits = digits,
+                        context = context
                     )},
                     balanceFormatter = {amount -> CurrencyHelper.formatCurrency(
                         amount = amount,
-                        currencyCode = rates[0].currency
+                        currencyCode = rates[0].currency,
+                        context = context
                     )},
                     onClick = {
                         onCurrencyClick(rates[0].currency)
@@ -73,16 +77,18 @@ fun CurrenciesList(
                 rate ->
                 CurrencyEntry(
                     rate = rate,
-                    currencyName = CurrencyHelper.getFullName(rate.currency),
+                    currencyName = stringResource(CurrencyHelper.getFullNameResId(rate.currency)),
                     balance = balanceMap.getOrDefault(key = rate.currency.uppercase(), defaultValue = 0.0),
                     currencyFormatter = {amount, digits -> CurrencyHelper.formatCurrency(
                         amount = amount,
                         currencyCode = rate.currency,
-                        fractionDigits = digits
+                        fractionDigits = digits,
+                        context = context
                     )},
                     balanceFormatter = {amount -> CurrencyHelper.formatCurrency(
                         amount = amount,
-                        currencyCode = rate.currency
+                        currencyCode = rate.currency,
+                        context = context
                     )},
                     onClick = onCurrencyClick,
                     onAmountChange = {},

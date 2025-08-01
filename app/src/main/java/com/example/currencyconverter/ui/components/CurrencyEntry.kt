@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +50,7 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.example.currencyconverter.R
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
 import com.example.currencyconverter.domain.logic.CurrencyHelper
 
@@ -110,7 +112,7 @@ fun CurrencyEntry(
                 )
                 if (balance > 0.0) {
                     Text(
-                        text = "Balance: ${balanceFormatter(balance)}",
+                        text = "${stringResource(R.string.balance)}: ${balanceFormatter(balance)}",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
