@@ -113,6 +113,9 @@ dependencies {
     androidTestImplementation(libs.android.test.impl)
     androidTestUtil(libs.android.test.util)
 
+    // json
+    implementation(libs.kotlinx.serialization.json)
+
     // test
     testImplementation(libs.android.test.impl.mokito.core)
     testImplementation(libs.android.test.impl.mokito.kotlin)

@@ -1,42 +1,42 @@
 package com.example.currencyconverter.ui.components
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
-import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.entity.Exchange
+import com.example.currencyconverter.domain.entity.ExchangeNavType
 import com.example.currencyconverter.domain.logic.AccountViewModel
-import com.example.currencyconverter.domain.logic.CurrencyHelper
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlin.reflect.typeOf
 
-enum class CurrentScreen {
-    Currencies,
-    Exchange,
-    Transactions
-}
+@Serializable
+object CurrenciesNav
+@Serializable
+data class ExchangeNav(val exchange: Exchange)
+@Serializable
+object TransactionsNav
 
 @Composable
 fun AppBase(
@@ -44,9 +44,8 @@ fun AppBase(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var curScreen by rememberSaveable { mutableStateOf(CurrentScreen.Currencies) }
-    var currentExchange by rememberSaveable { mutableStateOf<Exchange?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
     val balanceMap by viewModel.getAccounts().map { accounts -> accounts.associate { it.code to it.amount } }.collectAsState(initial = emptyMap())
 
@@ -57,9 +56,9 @@ fun AppBase(
                 NavigationDrawerItem(
                     shape = MaterialTheme.shapes.small,
                     label = { Text(text = "Currencies") },
-                    selected = curScreen == CurrentScreen.Currencies,
+                    selected = false,
                     onClick = {
-                        curScreen = CurrentScreen.Currencies
+                        navController.navigate(route = CurrenciesNav)
                         scope.launch {
                             drawerState.apply {
                                 close()
@@ -70,9 +69,9 @@ fun AppBase(
                 NavigationDrawerItem(
                     shape = MaterialTheme.shapes.small,
                     label = { Text(text = "Transactions") },
-                    selected = curScreen == CurrentScreen.Transactions,
+                    selected = false,
                     onClick = {
-                        curScreen = CurrentScreen.Transactions
+                        navController.navigate(route = TransactionsNav)
                         scope.launch {
                             drawerState.apply {
                                 close()
@@ -95,39 +94,60 @@ fun AppBase(
             ) }
         ) {
             innerPadding ->
-            when(curScreen) {
-                CurrentScreen.Currencies -> CurrenciesScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    onExchange = {newExchange ->
-                        currentExchange = newExchange
-                        curScreen = CurrentScreen.Exchange
-                    },
-                    balanceMap = balanceMap
-                )
-                CurrentScreen.Exchange -> ExchangeScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    curExchange = currentExchange!!,
-                    balanceMap = balanceMap,
-                    handleExchange = { transaction ->
-                        coroutineScope.launch {
-                            viewModel.insertTransaction(transaction)
-                            viewModel.updateAccount(AccountDbo(
-                                code = transaction.from,
-                                amount = balanceMap[transaction.from]!! - transaction.fromAmount
-                            ))
-                            viewModel.updateAccount(AccountDbo(
-                                code = transaction.to,
-                                amount = balanceMap.getOrDefault(key = transaction.to, defaultValue = 0.0) + transaction.toAmount
-                            ))
+            NavHost(
+                navController = navController,
+                startDestination = CurrenciesNav,
+                enterTransition = {
+                    // you can change whatever you want transition
+                    EnterTransition.None
+                },
+                exitTransition = {
+                    // you can change whatever you want transition
+                    ExitTransition.None
+                }) {
+                composable<CurrenciesNav> {
+                    CurrenciesScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        onExchange = {newExchange ->
+                            navController.navigate(route = ExchangeNav(newExchange))
+                        },
+                        balanceMap = balanceMap
+                    )
+                }
+                composable<ExchangeNav>(
+                    typeMap = mapOf(
+                        typeOf<Exchange>() to ExchangeNavType
+                    )
+                ) { backStackEntry ->
+                    val exchange = backStackEntry.toRoute<ExchangeNav>()
+                    BackHandler(true) { }
+                    ExchangeScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        curExchange = exchange.exchange,
+                        balanceMap = balanceMap,
+                        handleExchange = { transaction ->
+                            coroutineScope.launch {
+                                viewModel.insertTransaction(transaction)
+                                viewModel.updateAccount(AccountDbo(
+                                    code = transaction.from,
+                                    amount = balanceMap[transaction.from]!! - transaction.fromAmount
+                                ))
+                                viewModel.updateAccount(AccountDbo(
+                                    code = transaction.to,
+                                    amount = balanceMap.getOrDefault(key = transaction.to, defaultValue = 0.0) + transaction.toAmount
+                                ))
 
-                            currentExchange = null
-                            curScreen = CurrentScreen.Currencies
+                                navController.popBackStack()
+                                navController.navigate(route = CurrenciesNav)
+                            }
                         }
-                    }
-                )
-                CurrentScreen.Transactions -> TransactionsScreen(
-                    modifier = Modifier.padding(innerPadding)
-                )
+                    )
+                }
+                composable<TransactionsNav> {
+                    TransactionsScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
