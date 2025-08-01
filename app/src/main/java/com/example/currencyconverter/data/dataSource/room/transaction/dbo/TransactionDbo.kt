@@ -1,13 +1,16 @@
 package com.example.currencyconverter.data.dataSource.room.transaction.dbo
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.currencyconverter.data.dataSource.room.converter.Converters
+import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
+@Parcelize
 @Entity(tableName = "transactions")
 @TypeConverters(Converters::class)
 data class TransactionDbo (
@@ -22,4 +25,4 @@ data class TransactionDbo (
     @ColumnInfo(name = "amount_to")
     val toAmount: Double,
     val dateTime: LocalDateTime,
-)
+) : Parcelable
