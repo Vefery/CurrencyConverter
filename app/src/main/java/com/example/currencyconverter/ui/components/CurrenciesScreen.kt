@@ -14,6 +14,7 @@ import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
 import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.logic.AccountViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @Composable
 fun CurrenciesScreen(
@@ -25,6 +26,7 @@ fun CurrenciesScreen(
     var currentAmount by rememberSaveable { mutableDoubleStateOf(1.0) }
     var isLoading by rememberSaveable { mutableStateOf(true) }
     var rates by rememberSaveable { mutableStateOf<List<RateDto>>(emptyList()) }
+    val remoteRatesServiceImpl = RemoteRatesServiceImpl()
 
     val currencyClickFun = if (currentAmount != 1.0) {
         { newCode: String ->
@@ -45,9 +47,9 @@ fun CurrenciesScreen(
 
     LaunchedEffect(currentCurrency, currentAmount) {
         isLoading = true
-        while(true) {
+        while(isActive) {
             delay(1000L)
-            rates = RemoteRatesServiceImpl().getRates(baseCurrencyCode = currentCurrency, amount = currentAmount)
+            rates = remoteRatesServiceImpl.getRates(baseCurrencyCode = currentCurrency, amount = currentAmount).toList()
             isLoading = false
         }
     }

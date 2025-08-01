@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,7 +65,13 @@ fun CurrencyEntry(
     onAmountChange: (newAmount: Double) -> Unit
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value,)) }
+    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value)) }
+
+    LaunchedEffect(rate.value, isEditing) {
+        if (!isEditing) {
+            amountText = currencyFormatter(rate.value)
+        }
+    }
 
     Surface(
         modifier = modifier.clickable(enabled = !primary) {
