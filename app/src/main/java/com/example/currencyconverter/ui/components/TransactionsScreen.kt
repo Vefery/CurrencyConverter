@@ -41,7 +41,7 @@ fun TransactionsScreen(
         LazyColumn(
             modifier = modifier
         ) {
-            items(transactions) {
+            items(transactions.reversed()) {
                 transaction ->
                 TransactionEntry(
                     transaction = transaction

@@ -50,9 +50,10 @@ fun CurrenciesList(
                     rate = rates[0],
                     currencyName = CurrencyHelper.getFullName(rates[0].currency),
                     balance = balanceMap.getOrDefault(key = rates[0].currency.uppercase(), defaultValue = 0.0),
-                    currencyFormatter = {amount -> CurrencyHelper.formatCurrency(
+                    currencyFormatter = {amount, digits -> CurrencyHelper.formatCurrency(
                         amount = amount,
-                        currencyCode = rates[0].currency
+                        currencyCode = rates[0].currency,
+                        fractionDigits = digits
                     )},
                     balanceFormatter = {amount -> CurrencyHelper.formatCurrency(
                         amount = amount,
@@ -74,9 +75,10 @@ fun CurrenciesList(
                     rate = rate,
                     currencyName = CurrencyHelper.getFullName(rate.currency),
                     balance = balanceMap.getOrDefault(key = rate.currency.uppercase(), defaultValue = 0.0),
-                    currencyFormatter = {amount -> CurrencyHelper.formatCurrency(
+                    currencyFormatter = {amount, digits -> CurrencyHelper.formatCurrency(
                         amount = amount,
-                        currencyCode = rate.currency
+                        currencyCode = rate.currency,
+                        fractionDigits = digits
                     )},
                     balanceFormatter = {amount -> CurrencyHelper.formatCurrency(
                         amount = amount,

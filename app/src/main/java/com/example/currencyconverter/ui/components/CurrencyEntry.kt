@@ -59,17 +59,17 @@ fun CurrencyEntry(
     currencyName: String,
     balance: Double,
     primary: Boolean = false,
-    currencyFormatter: (amount: Double) -> String,
+    currencyFormatter: (amount: Double, digits: Int?) -> String,
     balanceFormatter: (amount: Double) -> String,
     onClick: (newCode: String) -> Unit,
     onAmountChange: (newAmount: Double) -> Unit
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value)) }
+    var amountText by rememberSaveable { mutableStateOf(currencyFormatter(rate.value, null)) }
 
     LaunchedEffect(rate.value, isEditing) {
         if (!isEditing) {
-            amountText = currencyFormatter(rate.value)
+            amountText = currencyFormatter(rate.value, null)
         }
     }
 
@@ -118,7 +118,7 @@ fun CurrencyEntry(
             if (isEditing) {
                 CurrencyInput(
                     currencyFormatter = currencyFormatter,
-                    initialValue = amountText,
+                    initialValue = currencyFormatter(rate.value, 2),
                     onDoneInput = {newAmount ->
                         amountText = newAmount
                         isEditing = false

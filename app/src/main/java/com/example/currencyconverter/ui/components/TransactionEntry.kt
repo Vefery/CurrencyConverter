@@ -73,7 +73,7 @@ fun TransactionEntry(
             }
             Text(
                 modifier = Modifier.padding(5.dp),
-                text = transaction.dateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm")),
+                text = transaction.dateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a")),
                 style = MaterialTheme.typography.bodySmall
             )
         }

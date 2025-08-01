@@ -26,7 +26,7 @@ import kotlin.text.format
 
 @Composable
 fun CurrencyInput(
-    currencyFormatter: (amount: Double) -> String,
+    currencyFormatter: (amount: Double, digits: Int?) -> String,
     initialValue: String,
     onDoneInput: (newAmount: String) -> Unit
 ) {
@@ -48,7 +48,7 @@ fun CurrencyInput(
                 val decimalValue = if (filteredText.isEmpty()) 0.0 else filteredText.toDouble() / 100
 
                 // Format as currency
-                val formattedText = currencyFormatter(decimalValue)
+                val formattedText = currencyFormatter(decimalValue, 2)
 
                 // Update the buffer with formatted text
                 replace(0, length, formattedText)
