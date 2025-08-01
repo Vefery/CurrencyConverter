@@ -108,9 +108,8 @@ fun CurrencyEntry(
                     onDoneInput = {newAmount ->
                         amountText = newAmount
                         isEditing = false
-                        onAmountChange(
-                            newAmount.filter { it.isDigit() }.toDouble() / 100
-                        )
+                        val newAmountDouble = newAmount.filter { it.isDigit() }.toDouble()
+                        onAmountChange(if (newAmountDouble == 0.0) 1.0 else newAmountDouble)
                     }
                 )
             } else {
