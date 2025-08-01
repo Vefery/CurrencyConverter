@@ -47,8 +47,6 @@ fun AppBase(
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
-    val balanceMap by viewModel.getAccounts().map { accounts -> accounts.associate { it.code to it.amount } }.collectAsState(initial = emptyMap())
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -98,11 +96,9 @@ fun AppBase(
                 navController = navController,
                 startDestination = CurrenciesNav,
                 enterTransition = {
-                    // you can change whatever you want transition
                     EnterTransition.None
                 },
                 exitTransition = {
-                    // you can change whatever you want transition
                     ExitTransition.None
                 }) {
                 composable<CurrenciesNav> {
@@ -110,8 +106,7 @@ fun AppBase(
                         modifier = Modifier.padding(innerPadding),
                         onExchange = {newExchange ->
                             navController.navigate(route = ExchangeNav(newExchange))
-                        },
-                        balanceMap = balanceMap
+                        }
                     )
                 }
                 composable<ExchangeNav>(
@@ -124,18 +119,9 @@ fun AppBase(
                     ExchangeScreen(
                         modifier = Modifier.padding(innerPadding),
                         curExchange = exchange.exchange,
-                        balanceMap = balanceMap,
                         handleExchange = { transaction ->
                             coroutineScope.launch {
-                                viewModel.insertTransaction(transaction)
-                                viewModel.updateAccount(AccountDbo(
-                                    code = transaction.from,
-                                    amount = balanceMap[transaction.from]!! - transaction.fromAmount
-                                ))
-                                viewModel.updateAccount(AccountDbo(
-                                    code = transaction.to,
-                                    amount = balanceMap.getOrDefault(key = transaction.to, defaultValue = 0.0) + transaction.toAmount
-                                ))
+                                viewModel.updateBalance(transaction)
 
                                 navController.popBackStack()
                                 navController.navigate(route = CurrenciesNav)

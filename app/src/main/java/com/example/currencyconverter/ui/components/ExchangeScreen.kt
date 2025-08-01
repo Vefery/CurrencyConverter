@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,9 +33,9 @@ import java.time.LocalDateTime
 
 @Composable
 fun ExchangeScreen(
+    viewModel: AccountViewModel = hiltViewModel(),
     modifier: Modifier,
     curExchange: Exchange,
-    balanceMap: Map<String, Double>,
     handleExchange: (transaction: TransactionDbo) -> Unit
 ) {
     val sourceCurrencyName: String = rememberSaveable { CurrencyHelper.getFullName(curExchange.sourceRate.currency) }
@@ -42,6 +43,7 @@ fun ExchangeScreen(
     var rateValue: Double by rememberSaveable { mutableDoubleStateOf(1.0) }
     var isLoading by rememberSaveable { mutableStateOf(true) }
     var isButtonActive by rememberSaveable { mutableStateOf(true) }
+    val balanceMap by viewModel.getBalanceMap().collectAsState(initial = emptyMap())
 
     LaunchedEffect(Unit) {
         isLoading = true

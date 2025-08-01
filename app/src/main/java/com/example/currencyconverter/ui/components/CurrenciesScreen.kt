@@ -18,7 +18,6 @@ import kotlinx.coroutines.isActive
 
 @Composable
 fun CurrenciesScreen(
-    balanceMap: Map<String, Double>,
     modifier: Modifier,
     onExchange: (newExchange: Exchange) -> Unit
 ) {
@@ -60,7 +59,6 @@ fun CurrenciesScreen(
         onCurrencyClick = currencyClickFun,
         isLoading = isLoading,
         rates = rates,
-        balanceMap = balanceMap,
         onAmountChange = {newAmount ->
             currentAmount = newAmount
         }

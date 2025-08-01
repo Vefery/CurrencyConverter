@@ -10,7 +10,8 @@ class ConverterRepository @Inject constructor(
     private val accountDao: AccountDao,
     private val transactionDao: TransactionDao
 ) {
-    fun getAllAccounts() = accountDao.getAllAsFlow()
+    fun getAllAccountsFlow() = accountDao.getAllAsFlow()
+    suspend fun getAllAccounts() = accountDao.getAll()
     suspend fun updateAccounts(data: AccountDbo) = accountDao.insertAll(data)
 
     suspend fun getAllTransactions() = transactionDao.getAll()

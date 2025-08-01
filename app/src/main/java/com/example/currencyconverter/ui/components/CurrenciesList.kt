@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,14 +23,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun CurrenciesList(
+    viewModel: AccountViewModel = hiltViewModel(),
     modifier: Modifier,
     amount: Double,
     isLoading: Boolean,
     rates: List<RateDto>,
-    balanceMap: Map<String, Double>,
     onCurrencyClick: (newCode: String) -> Unit,
     onAmountChange: (newAmount: Double) -> Unit
 ) {
+    val balanceMap by viewModel.getBalanceMap().collectAsState(initial = emptyMap())
+
     if (isLoading) {
         LoadingCircle(
             modifier = modifier
