@@ -13,11 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
-import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
 import com.example.currencyconverter.data.dataSource.room.transaction.dbo.TransactionDbo
 import com.example.currencyconverter.domain.logic.AccountViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun TransactionsScreen(

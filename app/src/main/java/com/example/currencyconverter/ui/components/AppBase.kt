@@ -13,8 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,11 +22,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.currencyconverter.R
-import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.entity.Exchange
 import com.example.currencyconverter.domain.entity.ExchangeNavType
 import com.example.currencyconverter.domain.logic.AccountViewModel
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.reflect.typeOf

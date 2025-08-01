@@ -8,11 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.currencyconverter.data.dataSource.remote.RemoteRatesServiceImpl
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
 import com.example.currencyconverter.domain.entity.Exchange
-import com.example.currencyconverter.domain.logic.AccountViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
